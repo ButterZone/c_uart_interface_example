@@ -20,3 +20,7 @@ mavlink_control
 /build/
 /Debug/
 
+/CMakeCache.txt
+/Makefile
+/cmake_install.cmake
+/px4_berry_eyes
