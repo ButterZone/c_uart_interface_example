@@ -65,7 +65,16 @@ Camera_Interface()
 	time_to_exit 	= false; 		// flag to signal camera read thread exit
 
 	camera_read_tid = 0; 					// camera read thread id
-	
+
+	low_hue			= 0;
+	low_saturation	= 0;
+	low_value		= 0;
+	high_hue 		= 255;
+	high_saturation = 255;
+	high_value 		= 255;
+
+	trackBarName 	= "trackbar";
+
 }
 
 // ------------------------------------------------------------------------------
@@ -113,6 +122,33 @@ read_camera()
 	return;
 }
 
+void
+Camera_Interface::
+process_frame()
+{
+	// convert frame into hsv channels
+	cvtColor(corrected_frame, processed_frame, CV_RGB2HSV_FULL);
+	// detect pixels in the HSV range desired
+	inRange(processed_frame, Scalar(low_hue, low_saturation, low_value), Scalar(high_hue, high_saturation, high_value), processed_frame);
+	erode(processed_frame, processed_frame, Mat());
+	dilate(processed_frame, processed_frame, Mat());
+}
+
+void
+Camera_Interface::
+create_trackbar()
+{
+	namedWindow(trackBarName);
+	createTrackbar("low_hue		   ", trackBarName, &low_hue, 255);
+	createTrackbar("low_saturation ", trackBarName, &low_saturation, 255);
+	createTrackbar("low_value      ", trackBarName, &low_value, 255);
+	createTrackbar("high_hue       ", trackBarName, &high_hue, 255);
+	createTrackbar("high_saturation", trackBarName, &high_saturation, 255);
+	createTrackbar("high_value     ", trackBarName, &high_value, 255);
+
+	return;
+}
+
 // ------------------------------------------------------------------------------
 //   Show original frame
 // ------------------------------------------------------------------------------
@@ -121,6 +157,17 @@ Camera_Interface::
 show_original_frame() 
 {
 	imshow( "original", corrected_frame );
+	return;
+}
+
+// ------------------------------------------------------------------------------
+//   Show processed frame with trackbar
+// ------------------------------------------------------------------------------
+void
+Camera_Interface::
+show_processed_frame_with_trackbar()
+{
+	imshow( trackBarName, processed_frame );
 	return;
 }
 
@@ -204,7 +251,21 @@ camera_read_thread()
 // ------------------------------------------------------------------------------
 //  Pthread Starter Helper Functions
 // ------------------------------------------------------------------------------
+void
+Camera_Interface::
+handle_quit( int sig )
+{
+	try {
+		stop();
+	}
+	catch (int error) {
+		fprintf(stderr, "Warning, could no stop camera interface\n");
+	}
+}
 
+// ------------------------------------------------------------------------------
+//  Pthread Starter Helper Functions
+// ------------------------------------------------------------------------------
 void*
 start_camera_interface_read_thread( void *args ) 
 {

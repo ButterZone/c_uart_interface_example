@@ -98,12 +98,28 @@ public:
 
 	char camera_reading_status;
 
+	int low_hue;
+	int low_saturation;
+	int low_value;
+	int high_hue;
+	int high_saturation;
+	int high_value;
+
+	string trackBarName;
+
 	void check_camera();
 	void read_camera();
 	void show_original_frame();
+	void show_processed_frame_with_trackbar();
+	void process_frame();
+	void create_trackbar();
+
 	void start();
 	void stop();
+
 	void start_camera_read_thread();
+
+	void handle_quit( int sig );
 
 private:
 
@@ -113,6 +129,7 @@ private:
 	// frames
 	Mat original_frame;
 	Mat corrected_frame;
+	Mat processed_frame;
 
 	bool time_to_exit;
 

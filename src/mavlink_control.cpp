@@ -133,6 +133,7 @@ top (int argc, char **argv)
 	 */
 	serial_port_quit         = &serial_port;
 	autopilot_interface_quit = &autopilot_interface;
+	camera_interface_quit 	 = &camera_interface;
 	signal(SIGINT,quit_handler);
 
 	/*
@@ -230,10 +231,16 @@ commands(Autopilot_Interface &api, Camera_Interface &cpi)
 	// check camera
 	cpi.check_camera();
 
+	// crate trackbar
+	cpi.create_trackbar();
+
 	// Wait for 8 seconds, check position
 	while (true)
 	{
 		cpi.show_original_frame();
+		cpi.process_frame();
+		cpi.show_processed_frame_with_trackbar();
+
 
 		usleep(25000); // This is running the loop at 40 HZ
 		char key = (char) waitKey(5);
