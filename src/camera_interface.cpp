@@ -124,9 +124,12 @@ read_camera()
 	return;
 }
 
+// ------------------------------------------------------------------------------
+//   process the raw frame to capture objects according to HSV range
+// ------------------------------------------------------------------------------
 void
 Camera_Interface::
-process_frame()
+process_frame_hsv()
 {
 	// convert frame into hsv channels
 	cvtColor(corrected_frame, processed_frame, CV_RGB2HSV_FULL);

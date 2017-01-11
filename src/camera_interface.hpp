@@ -113,7 +113,7 @@ public:
 	void show_corrected_frame();
 	void show_corrected_frame_with_contour();
 	void show_processed_frame_with_trackbar();
-	void process_frame();
+	void process_frame_hsv();
 	void create_trackbar();
 
 	void start();
