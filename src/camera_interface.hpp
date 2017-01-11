@@ -110,6 +110,7 @@ public:
 	void check_camera();
 	void read_camera();
 	void show_original_frame();
+	void show_corrected_frame();
 	void show_processed_frame_with_trackbar();
 	void process_frame();
 	void create_trackbar();

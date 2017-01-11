@@ -188,8 +188,6 @@ process_frame()
 	// add contours to the corrected frame
 	corrected_frame += contour_frame;
 
-	this->show_original_frame();
-
 	return;
 }
 
@@ -215,7 +213,18 @@ void
 Camera_Interface::
 show_original_frame() 
 {
-	imshow( "original", corrected_frame );
+	imshow( "original", original_frame );
+	return;
+}
+
+// ------------------------------------------------------------------------------
+//   Show corrected frame
+// ------------------------------------------------------------------------------
+void
+Camera_Interface::
+show_corrected_frame() 
+{
+	imshow( "corrected", corrected_frame );
 	return;
 }
 
