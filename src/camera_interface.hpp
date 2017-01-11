@@ -111,6 +111,7 @@ public:
 	void read_camera();
 	void show_original_frame();
 	void show_corrected_frame();
+	void show_corrected_frame_with_contour();
 	void show_processed_frame_with_trackbar();
 	void process_frame();
 	void create_trackbar();
@@ -132,6 +133,7 @@ private:
 	Mat corrected_frame;
 	Mat processed_frame;
 	Mat contour_frame;
+	Mat corrected_frame_with_contour;
 
 	// arrays
 	vector<vector<Point> > contours;

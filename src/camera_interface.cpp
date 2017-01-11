@@ -186,7 +186,8 @@ process_frame()
 	} // if there is enough circle centres
 
 	// add contours to the corrected frame
-	corrected_frame += contour_frame;
+	corrected_frame.copyTo(corrected_frame_with_contour);
+	corrected_frame_with_contour += contour_frame;
 
 	return;
 }
@@ -225,6 +226,17 @@ Camera_Interface::
 show_corrected_frame() 
 {
 	imshow( "corrected", corrected_frame );
+	return;
+}
+
+// ------------------------------------------------------------------------------
+//   Show corrected frame with contour
+// ------------------------------------------------------------------------------
+void
+Camera_Interface::
+show_corrected_frame_with_contour() 
+{
+	imshow( "corrected with contour", corrected_frame_with_contour );
 	return;
 }
 

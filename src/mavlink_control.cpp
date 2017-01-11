@@ -239,7 +239,7 @@ commands(Autopilot_Interface &api, Camera_Interface &cpi)
 	{
 		cpi.process_frame();
 		cpi.show_processed_frame_with_trackbar();
-		cpi.show_corrected_frame();
+		cpi.show_corrected_frame_with_contour();
 
 
 		usleep(50000); // This is running the loop at 20 HZ
