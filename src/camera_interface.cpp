@@ -73,7 +73,7 @@ Camera_Interface()
 	high_saturation = 81;
 	high_value 		= 61;
 
-	trackBarName 	= "trackbar";
+	track_bar_name_hsv	= "trackbar_hsv";
 
 	number_of_centres_to_draw = 10;
 
@@ -197,15 +197,15 @@ process_frame_hsv()
 
 void
 Camera_Interface::
-create_trackbar()
+create_trackbar_hsv()
 {
-	namedWindow(trackBarName);
-	createTrackbar("low_hue		   ", trackBarName, &low_hue, 255);
-	createTrackbar("low_saturation ", trackBarName, &low_saturation, 255);
-	createTrackbar("low_value      ", trackBarName, &low_value, 255);
-	createTrackbar("high_hue       ", trackBarName, &high_hue, 255);
-	createTrackbar("high_saturation", trackBarName, &high_saturation, 255);
-	createTrackbar("high_value     ", trackBarName, &high_value, 255);
+	namedWindow(track_bar_name_hsv);
+	createTrackbar("low_hue		   ", track_bar_name_hsv, &low_hue, 255);
+	createTrackbar("low_saturation ", track_bar_name_hsv, &low_saturation, 255);
+	createTrackbar("low_value      ", track_bar_name_hsv, &low_value, 255);
+	createTrackbar("high_hue       ", track_bar_name_hsv, &high_hue, 255);
+	createTrackbar("high_saturation", track_bar_name_hsv, &high_saturation, 255);
+	createTrackbar("high_value     ", track_bar_name_hsv, &high_value, 255);
 
 	return;
 }
@@ -237,7 +237,7 @@ show_corrected_frame()
 // ------------------------------------------------------------------------------
 void
 Camera_Interface::
-show_corrected_frame_with_contour() 
+show_corrected_frame_with_contour_hsv() 
 {
 	imshow( "corrected with contour", corrected_frame_with_contour );
 	return;
@@ -248,9 +248,9 @@ show_corrected_frame_with_contour()
 // ------------------------------------------------------------------------------
 void
 Camera_Interface::
-show_processed_frame_with_trackbar()
+show_processed_frame_with_trackbar_hsv()
 {
-	imshow( trackBarName, processed_frame );
+	imshow( track_bar_name_hsv, processed_frame );
 	return;
 }
 

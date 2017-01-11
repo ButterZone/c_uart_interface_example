@@ -105,16 +105,16 @@ public:
 	int high_saturation;
 	int high_value;
 
-	string trackBarName;
+	string track_bar_name_hsv;
 
 	void check_camera();
 	void read_camera();
 	void show_original_frame();
 	void show_corrected_frame();
-	void show_corrected_frame_with_contour();
-	void show_processed_frame_with_trackbar();
+	void show_corrected_frame_with_contour_hsv();
+	void show_processed_frame_with_trackbar_hsv();
 	void process_frame_hsv();
-	void create_trackbar();
+	void create_trackbar_hsv();
 
 	void start();
 	void stop();
