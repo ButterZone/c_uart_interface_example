@@ -70,10 +70,12 @@ Camera_Interface()
 	low_saturation	= 0;
 	low_value		= 0;
 	high_hue 		= 255;
-	high_saturation = 255;
-	high_value 		= 255;
+	high_saturation = 81;
+	high_value 		= 61;
 
 	trackBarName 	= "trackbar";
+
+	number_of_centres_to_draw = 10;
 
 }
 
@@ -128,10 +130,67 @@ process_frame()
 {
 	// convert frame into hsv channels
 	cvtColor(corrected_frame, processed_frame, CV_RGB2HSV_FULL);
-	// detect pixels in the HSV range desired
+
+	// detect pixels in the HSV range desired, then erode and dilate to remove small artifacts
 	inRange(processed_frame, Scalar(low_hue, low_saturation, low_value), Scalar(high_hue, high_saturation, high_value), processed_frame);
 	erode(processed_frame, processed_frame, Mat());
 	dilate(processed_frame, processed_frame, Mat());
+
+	// find contours in the frame
+	processed_frame.copyTo(contour_frame); // clone this frame for contours
+	findContours(contour_frame, contours, hierarchy, CV_RETR_TREE, CV_CHAIN_APPROX_SIMPLE, Point(0,0));
+	contour_frame = Mat::zeros(contour_frame.size(), CV_8UC3);
+
+	// iterate through the contour to find the largest contour
+	if ( contours.size() > 0 )
+	{
+		this_contour_area = 0;
+		largest_contour_area = 0;
+		largest_contour_index = 0;
+		for (int i = 0; i < contours.size(); i++)
+		{
+			this_contour_area = contourArea(contours[i], false);
+			if (this_contour_area > largest_contour_area)
+			{
+				largest_contour_area = this_contour_area;
+				largest_contour_index = i;
+			} // end if area > largest area
+		} // end for all the contours
+
+		// outline the largest contour found
+		drawContours( contour_frame, contours, largest_contour_index, Scalar(255,0,0), 2, 8, hierarchy, 0, Point());
+
+		// find the minimum enclosing circle of the largest contour
+		minEnclosingCircle(contours[largest_contour_index], centre, radius);
+
+		// draw this circle on the contour frame
+		circle(corrected_frame, centre, radius, Scalar(0,255,0), 2);
+
+		// keep track of all the centres in history
+		circleCentres.push_back(centre);
+
+		// display information about the contour
+	} // end if contours.size() > 0
+
+	// draw the trail of the circle centres if there is enough centres to draw
+	if (circleCentres.size() > number_of_centres_to_draw)
+	{
+		for (int i = 1; i < circleCentres.size(); i++)
+		{
+			thickness = sqrt(64/(circleCentres.size()-i+1)*2.5); // determine thickness of the tail
+			line(contour_frame, circleCentres[i], circleCentres[i-1], Scalar(0,0,255), thickness);
+		} // end for all the circle centres
+
+		// keep the vector small
+		circleCentres.erase(circleCentres.begin());
+	} // if there is enough circle centres
+
+	// add contours to the corrected frame
+	corrected_frame += contour_frame;
+
+	this->show_original_frame();
+
+	return;
 }
 
 void

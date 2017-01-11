@@ -130,6 +130,21 @@ private:
 	Mat original_frame;
 	Mat corrected_frame;
 	Mat processed_frame;
+	Mat contour_frame;
+
+	// arrays
+	vector<vector<Point> > contours;
+	vector<Vec4i> hierarchy;
+	vector<Point2f> circleCentres;
+
+	// contours
+	double this_contour_area;
+	double largest_contour_area;
+	int largest_contour_index;
+	float radius;
+	Point2f centre;
+	int thickness;
+	int number_of_centres_to_draw;
 
 	bool time_to_exit;
 

@@ -237,12 +237,12 @@ commands(Autopilot_Interface &api, Camera_Interface &cpi)
 	// Wait for 8 seconds, check position
 	while (true)
 	{
-		cpi.show_original_frame();
 		cpi.process_frame();
 		cpi.show_processed_frame_with_trackbar();
+		//cpi.show_original_frame();
 
 
-		usleep(25000); // This is running the loop at 40 HZ
+		usleep(50000); // This is running the loop at 20 HZ
 		char key = (char) waitKey(5);
 
 		if (key == 27 || key == 113){
