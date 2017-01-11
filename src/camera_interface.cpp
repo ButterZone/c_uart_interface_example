@@ -60,7 +60,11 @@
 Camera_Interface::
 Camera_Interface()
 {
+	// initialize attributes
+	camera_reading_status = 0; 		// whether the camera read thread is running
+	time_to_exit 	= false; 		// flag to signal camera read thread exit
 
+	camera_read_tid = 0; 					// camera read thread id
 	
 }
 
@@ -76,7 +80,8 @@ Camera_Interface::
 // ------------------------------------------------------------------------------
 void
 Camera_Interface::
-check_camera() {
+check_camera() 
+{
 	if (!Camera.open()) {
 		fprintf(stderr, "Error: Failed to open the PiCamera\n");
 	}
@@ -89,20 +94,21 @@ check_camera() {
 // ------------------------------------------------------------------------------
 void
 Camera_Interface::
-read_camera() {
+read_camera() 
+{
 	// update frame
 	Camera.grab();
-	Camera.retrieve(frame);
+	Camera.retrieve(original_frame);
 
 	// print error if no frame is captured
-	if ( frame.empty() ) {
+	if ( original_frame.empty() ) {
 		fprintf(stderr, "Error: Blank frame grabbed\n");
 	}
 
 	// reduce orignial frame to a quarter of the size
-	resize(frame, frame, Size(), 0.5, 0.5, INTER_LINEAR);
+	resize(original_frame, original_frame, Size(), 0.5, 0.5, INTER_LINEAR);
 	// convert PiCamera RGB format to BGR for correct OpenCV expectation
-	cvtColor(frame, frame, CV_RGB2BGR);
+	cvtColor(original_frame, corrected_frame, CV_RGB2BGR);
 
 	return;
 }
@@ -112,8 +118,9 @@ read_camera() {
 // ------------------------------------------------------------------------------
 void
 Camera_Interface::
-show_original_frame() {
-	imshow( "original", frame );
+show_original_frame() 
+{
+	imshow( "original", corrected_frame );
 	return;
 }
 
@@ -122,7 +129,91 @@ show_original_frame() {
 // ------------------------------------------------------------------------------
 void
 Camera_Interface::
-start() {
-	printf("START CAMERA \n");
+start() 
+{
+	int result;
+
+	printf("START CAMERA READ THREAD\n");
+
+	result = pthread_create( &camera_read_tid, NULL, &start_camera_interface_read_thread, this );
+	if ( result ) throw result;
+
+	// now we're reading the camera feed
+	printf("\n");
 	return;
+}
+
+// ------------------------------------------------------------------------------
+//   Shutdown
+// ------------------------------------------------------------------------------
+void
+Camera_Interface::
+stop()
+{
+	// close camera read thread
+	printf("CLOSE CAMERA READ THREAD\n");
+
+	// signal exit
+	time_to_exit = true;
+
+	// wait for exit
+	pthread_join(camera_read_tid, NULL);
+
+	// now the camera read thread is closed
+	printf("\n");
+}
+
+// ------------------------------------------------------------------------------
+//   Start Camera Read Thread
+// ------------------------------------------------------------------------------
+void
+Camera_Interface::
+start_camera_read_thread() 
+{
+	if ( camera_reading_status != 0)
+	{
+		fprintf(stderr, "camera read thread already running\n");
+		return;
+	} 
+	else 
+	{
+		camera_read_thread();
+		return;
+	}
+}
+// ------------------------------------------------------------------------------
+//   Camera Read Thread
+// ------------------------------------------------------------------------------
+void
+Camera_Interface::
+camera_read_thread() 
+{
+	camera_reading_status = true;
+
+	while ( !time_to_exit )
+	{
+		read_camera();
+		usleep(25000); 	// This is roughly 40 Hz
+	}
+
+	camera_reading_status = false;
+
+	return;
+}
+
+// ------------------------------------------------------------------------------
+//  Pthread Starter Helper Functions
+// ------------------------------------------------------------------------------
+
+void*
+start_camera_interface_read_thread( void *args ) 
+{
+	// takes a camera interface object argument
+	Camera_Interface *camera_interface = (Camera_Interface *)args;
+
+	// run the object's camera read thread
+	camera_interface->start_camera_read_thread();
+
+	// done!
+	return NULL;
 }

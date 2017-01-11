@@ -63,6 +63,14 @@
 #include <vector>
 #include <stdio.h>
 #include <math.h>
+#include <signal.h>
+#include <time.h>
+#include <sys/time.h>
+#include <signal.h>
+#include <termios.h>
+#include <unistd.h>
+#include <cstdlib>
+#include <fcntl.h>
 
 using namespace cv;
 using namespace std;
@@ -70,6 +78,7 @@ using namespace std;
 // ------------------------------------------------------------------------------
 //   Prototypes
 // ------------------------------------------------------------------------------
+void* start_camera_interface_read_thread(void *args);
 
 // ----------------------------------------------------------------------------------
 //   Camera Interface Class
@@ -87,10 +96,14 @@ public:
 	Camera_Interface();
 	~Camera_Interface();
 
+	char camera_reading_status;
+
 	void check_camera();
 	void read_camera();
 	void show_original_frame();
 	void start();
+	void stop();
+	void start_camera_read_thread();
 
 private:
 
@@ -98,7 +111,14 @@ private:
 	raspicam::RaspiCam_Cv Camera;
 
 	// frames
-	Mat frame;
+	Mat original_frame;
+	Mat corrected_frame;
+
+	bool time_to_exit;
+
+	pthread_t camera_read_tid;
+
+	void camera_read_thread();
 };
 
 #endif // CAMERA_INTERFACE_H_

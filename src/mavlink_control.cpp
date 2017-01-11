@@ -163,6 +163,7 @@ top (int argc, char **argv)
 	 */
 	autopilot_interface.stop();
 	serial_port.stop();
+	camera_interface.stop();
 
 
 	// --------------------------------------------------------------------------
@@ -232,7 +233,6 @@ commands(Autopilot_Interface &api, Camera_Interface &cpi)
 	// Wait for 8 seconds, check position
 	while (true)
 	{
-		cpi.read_camera();
 		cpi.show_original_frame();
 
 		usleep(25000); // This is running the loop at 40 HZ
