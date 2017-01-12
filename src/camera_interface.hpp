@@ -149,6 +149,10 @@ private:
 	int thickness;
 	int number_of_centres_to_draw;
 
+	// information
+	string hsv_contour_information_string_line1;
+	string hsv_contour_information_string_line2;
+
 	bool time_to_exit;
 
 	pthread_t camera_read_tid;

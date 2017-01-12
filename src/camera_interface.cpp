@@ -186,7 +186,17 @@ process_frame_hsv()
 
 		// keep the vector small
 		circleCentres.erase(circleCentres.begin());
-	} // if there is enough circle centres
+	} // end if there is enough circle centres
+
+	// create information stream to be displayed on images
+	stringstream hsv_contour_information_line1;
+	stringstream hsv_contour_information_line2;
+	hsv_contour_information_line1 	<< "centre: (" << circleCentres.back().x << ","
+									<< circleCentres.back().y << ")";
+	hsv_contour_information_line2	<< "radius: " << radius;
+
+	hsv_contour_information_string_line1 = hsv_contour_information_line1.str();
+	hsv_contour_information_string_line2 = hsv_contour_information_line2.str();
 
 	// add contours to the corrected frame
 	corrected_frame.copyTo(corrected_frame_with_contour);
@@ -239,7 +249,27 @@ void
 Camera_Interface::
 show_corrected_frame_with_contour_hsv() 
 {
+	Size text_size = getTextSize(hsv_contour_information_string_line1, 1, 1, 1, 0);
+	Point text_position(2, text_size.height+2);
+	Point text_position_line2(2, text_size.height+text_size.height+4);
+	putText(corrected_frame_with_contour,
+			hsv_contour_information_string_line1,
+			text_position,
+			1,
+			1,
+			Scalar(0, 255, 0),
+			1,
+			8);
+	putText(corrected_frame_with_contour,
+			hsv_contour_information_string_line2,
+			text_position_line2,
+			1,
+			1,
+			Scalar(0, 255, 0),
+			1,
+			8);
 	imshow( "corrected with contour", corrected_frame_with_contour );
+
 	return;
 }
 

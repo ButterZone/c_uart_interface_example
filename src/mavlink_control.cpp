@@ -214,30 +214,33 @@ commands(Autopilot_Interface &api, Camera_Interface &cpi)
 //				   sp        );
 
 	// Example 2 - Set Position
-	 set_position( ip.x - 5.0 , // [m]
-			 	   ip.y - 5.0 , // [m]
-				   ip.z       , // [m]
-				   sp         );
+	 // set_position( ip.x - 5.0 , // [m]
+		// 	 	   ip.y - 5.0 , // [m]
+		// 		   ip.z       , // [m]
+		// 		   sp         );
 
 
 	// Example 1.2 - Append Yaw Command
-	set_yaw( ip.yaw , // [rad]
-			 sp     );
+	// set_yaw( ip.yaw , // [rad]
+	// 		 sp     );
 
 	// SEND THE COMMAND
-	api.update_setpoint(sp);
+	// api.update_setpoint(sp);
 	// NOW pixhawk will try to move
 
 	// check camera
 	cpi.check_camera();
 
-	// crate trackbar
-	cpi.create_trackbar();
+	// create trackbar
+	cpi.create_trackbar_hsv();
 
 	// Wait for 8 seconds, check position
 	while (true)
 	{
+		// process the frame
 		cpi.process_frame_hsv();
+		// optional - show processed and corrected frame on screen
+		// not recommended without a monitor directly attached to rpi
 		cpi.show_processed_frame_with_trackbar_hsv();
 		cpi.show_corrected_frame_with_contour_hsv();
 
