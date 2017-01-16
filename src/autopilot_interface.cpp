@@ -352,11 +352,11 @@ read_messages()
 					break;
 				}
 
-				case MAVLINK_MSG_ID_RC_CHANNELS_RAW:
+				case MAVLINK_MSG_ID_RC_CHANNELS:
 				{
-					mavlink_msg_rc_channels_raw_decode(&message, &(current_messages.rc_channels_raw));
-					current_messages.time_stamps.rc_channels_raw = get_time_usec();
-					this_timestamps.rc_channels_raw = current_messages.time_stamps.rc_channels_raw;
+					mavlink_msg_rc_channels_decode(&message, &(current_messages.rc_channels));
+					current_messages.time_stamps.rc_channels = get_time_usec();
+					this_timestamps.rc_channels = current_messages.time_stamps.rc_channels;
 				}
 
 				default:
@@ -381,6 +381,7 @@ read_messages()
 //				this_timestamps.position_target_global_int &&
 //				this_timestamps.highres_imu                &&
 //				this_timestamps.attitude                   &&
+// 				this_timestamps.rc_channels  			   &&
 				this_timestamps.sys_status
 				;
 
@@ -499,7 +500,6 @@ void
 Autopilot_Interface::
 disable_offboard_control()
 {
-
 	// Should only send this command once
 	if ( control_status == true )
 	{
@@ -527,6 +527,22 @@ disable_offboard_control()
 
 }
 
+// ------------------------------------------------------------------------------
+//   Get RC Channels PWM Values
+// ------------------------------------------------------------------------------
+void
+Autopilot_Interface::
+get_rc_channels_pwm_values()
+{
+	current_rc_channels_pwm.chan1_raw = current_messages.rc_channels.chan1_raw;
+	current_rc_channels_pwm.chan2_raw = current_messages.rc_channels.chan2_raw;
+	current_rc_channels_pwm.chan3_raw = current_messages.rc_channels.chan3_raw;
+	current_rc_channels_pwm.chan4_raw = current_messages.rc_channels.chan4_raw;
+	current_rc_channels_pwm.chan5_raw = current_messages.rc_channels.chan5_raw;
+	current_rc_channels_pwm.chan6_raw = current_messages.rc_channels.chan6_raw;
+	current_rc_channels_pwm.chan7_raw = current_messages.rc_channels.chan7_raw;
+	current_rc_channels_pwm.chan8_raw = current_messages.rc_channels.chan8_raw;
+}
 
 // ------------------------------------------------------------------------------
 //   Toggle Off-Board Mode

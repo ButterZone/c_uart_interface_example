@@ -203,6 +203,7 @@ commands(Autopilot_Interface &api, Camera_Interface &cpi)
 	// initialize command data strtuctures
 	mavlink_set_position_target_local_ned_t sp;
 	mavlink_set_position_target_local_ned_t ip = api.initial_position;
+	mavlink_rc_channels_t rc_channels = api.current_rc_channels_pwm;
 
 	// autopilot_interface.h provides some helper functions to build the command
 
@@ -239,6 +240,9 @@ commands(Autopilot_Interface &api, Camera_Interface &cpi)
 	// Wait for 8 seconds, check position
 	while (true)
 	{
+		// get current RC channels pwm values
+		api.get_rc_channels_pwm_values();
+		printf("Channel 1: %d\n", api.current_rc_channels_pwm.chan1_raw);
 		// process the frame
 		cpi.process_frame_hsv();
 		// optional - show processed and corrected frame on screen
