@@ -352,6 +352,13 @@ read_messages()
 					break;
 				}
 
+				case MAVLINK_MSG_ID_RC_CHANNELS_RAW:
+				{
+					mavlink_msg_rc_channels_raw_decode(&message, &(current_messages.rc_channels_raw));
+					current_messages.time_stamps.rc_channels_raw = get_time_usec();
+					this_timestamps.rc_channels_raw = current_messages.time_stamps.rc_channels_raw;
+				}
+
 				default:
 				{
 					// printf("Warning, did not handle message id %i\n",message.msgid);
