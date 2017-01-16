@@ -198,7 +198,7 @@ commands(Autopilot_Interface &api, Camera_Interface &cpi)
 	// --------------------------------------------------------------------------
 	//   SEND OFFBOARD COMMANDS
 	// --------------------------------------------------------------------------
-	printf("SEND OFFBOARD COMMANDS\n");
+	printf("SEND OFFBOARD COMMANDS\n\n");
 
 	// initialize command data strtuctures
 	mavlink_set_position_target_local_ned_t sp;
@@ -234,6 +234,8 @@ commands(Autopilot_Interface &api, Camera_Interface &cpi)
 	// create trackbar
 	cpi.create_trackbar_hsv();
 
+	printf("START COMMAND LOOP\n");
+
 	// Wait for 8 seconds, check position
 	while (true)
 	{
@@ -243,6 +245,42 @@ commands(Autopilot_Interface &api, Camera_Interface &cpi)
 		// not recommended without a monitor directly attached to rpi
 		cpi.show_processed_frame_with_trackbar_hsv();
 		cpi.show_corrected_frame_with_contour_hsv();
+
+		if ( cpi.object_detected )
+		{
+			cpi.calculate_x_speed_target();
+			cpi.calculate_y_speed_target();
+			cpi.calculate_z_speed_target();
+			set_velocity(	cpi.x_speed_target,
+							cpi.y_speed_target,
+							cpi.z_speed_target,
+							sp);
+			api.update_setpoint(sp);
+		}
+		else
+		{
+			sp.x = ip.x;
+			sp.y = ip.y;
+			sp.z = ip.z;
+			set_position(ip.x, ip.y, ip.z, sp);
+			api.update_setpoint(sp);
+		}
+
+		// sp.type_mask =
+		// 	MAVLINK_MSG_SET_POSITION_TARGET_LOCAL_NED_YAW_ANGLE &
+		// 	MAVLINK_MSG_SET_POSITION_TARGET_LOCAL_NED_POSITION;
+
+		// sp.coordinate_frame = MAV_FRAME_LOCAL_NED;
+
+		// sp.x = ip.x;
+		// sp.y = ip.y;
+		// sp.z = ip.z;
+		// sp.yaw = cpi.yaw_target;
+
+		// cpi.calculate_yaw_target();
+		// set_position(ip.x, ip.y, ip.z, sp);
+		// set_yaw(cpi.yaw_target, sp);
+		// api.update_setpoint(sp);
 
 
 		usleep(50000); // This is running the loop at 20 HZ

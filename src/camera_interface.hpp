@@ -98,6 +98,8 @@ public:
 
 	char camera_reading_status;
 
+	bool object_detected;
+
 	int low_hue;
 	int low_saturation;
 	int low_value;
@@ -105,16 +107,40 @@ public:
 	int high_saturation;
 	int high_value;
 
+	int corrected_frame_size_x;
+	int corrected_frame_size_y;
+	int centre_of_corrected_frame_x;
+	int centre_of_corrected_frame_y;
+
 	string track_bar_name_hsv;
+
+	float object_actual_diameter;
+	float focal_length;
+
+	float object_offset_horizontal;
+	float object_offset_vertical;
+	float object_offset_distance;
+
+	float yaw_target;
+	float x_speed_target;
+	float y_speed_target;
+	float z_speed_target;
 
 	void check_camera();
 	void read_camera();
+	void process_frame_hsv();
+	void calculate_object_offsets();
+
+	void calculate_yaw_target();
+	void calculate_x_speed_target();
+	void calculate_y_speed_target();
+	void calculate_z_speed_target();
+
+	void create_trackbar_hsv();
 	void show_original_frame();
 	void show_corrected_frame();
 	void show_corrected_frame_with_contour_hsv();
 	void show_processed_frame_with_trackbar_hsv();
-	void process_frame_hsv();
-	void create_trackbar_hsv();
 
 	void start();
 	void stop();
@@ -152,6 +178,7 @@ private:
 	// information
 	string hsv_contour_information_string_line1;
 	string hsv_contour_information_string_line2;
+	string hsv_contour_information_string_line3;
 
 	bool time_to_exit;
 
