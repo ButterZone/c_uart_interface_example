@@ -184,111 +184,73 @@ top (int argc, char **argv)
 void
 commands(Autopilot_Interface &api, Camera_Interface &cpi)
 {
-
-	// --------------------------------------------------------------------------
-	//   START OFFBOARD MODE
-	// --------------------------------------------------------------------------
-
-	api.enable_offboard_control();
-	usleep(100); // give some time to let it sink in
-
-	// now the autopilot is accepting setpoint commands
-
-
-	// --------------------------------------------------------------------------
-	//   SEND OFFBOARD COMMANDS
-	// --------------------------------------------------------------------------
-	printf("SEND OFFBOARD COMMANDS\n\n");
-
-	// initialize command data strtuctures
+	// set up
 	mavlink_set_position_target_local_ned_t sp;
 	mavlink_set_position_target_local_ned_t ip = api.initial_position;
-
-	// autopilot_interface.h provides some helper functions to build the command
-
-
-	// Example 1 - Set Velocity
-//	set_velocity( -1.0       , // [m/s]
-//				  -1.0       , // [m/s]
-//				   0.0       , // [m/s]
-//				   sp        );
-
-	// Example 2 - Set Position
-	 // set_position( ip.x - 5.0 , // [m]
-		// 	 	   ip.y - 5.0 , // [m]
-		// 		   ip.z       , // [m]
-		// 		   sp         );
-
-
-	// Example 1.2 - Append Yaw Command
-	// set_yaw( ip.yaw , // [rad]
-	// 		 sp     );
-
-	// SEND THE COMMAND
-	// api.update_setpoint(sp);
-	// NOW pixhawk will try to move
+	mavlink_rc_channels_t rc_channels = api.current_rc_channels_pwm;
 
 	// check camera
 	cpi.check_camera();
-
 	// create trackbar
 	cpi.create_trackbar_hsv();
-
 	printf("START COMMAND LOOP\n");
+	printf("\n");
+	printf("WAIT FOR OFFBOARD SWITCH\n");
+	printf("\n");
 
-	// Wait for 8 seconds, check position
-	while (true)
+	while ( true )
 	{
-		// process the frame
 		cpi.process_frame_hsv();
-		// optional - show processed and corrected frame on screen
-		// not recommended without a monitor directly attached to rpi
 		cpi.show_processed_frame_with_trackbar_hsv();
 		cpi.show_corrected_frame_with_contour_hsv();
 
-		if ( cpi.object_detected )
-		{
-			cpi.calculate_x_speed_target();
-			cpi.calculate_y_speed_target();
-			cpi.calculate_z_speed_target();
-			set_velocity(	cpi.x_speed_target,
-							cpi.y_speed_target,
-							cpi.z_speed_target,
-							sp);
-			api.update_setpoint(sp);
-		}
-		else
-		{
-			sp.x = ip.x;
-			sp.y = ip.y;
-			sp.z = ip.z;
-			set_position(ip.x, ip.y, ip.z, sp);
-			api.update_setpoint(sp);
-		}
-
-		// sp.type_mask =
-		// 	MAVLINK_MSG_SET_POSITION_TARGET_LOCAL_NED_YAW_ANGLE &
-		// 	MAVLINK_MSG_SET_POSITION_TARGET_LOCAL_NED_POSITION;
-
-		// sp.coordinate_frame = MAV_FRAME_LOCAL_NED;
-
-		// sp.x = ip.x;
-		// sp.y = ip.y;
-		// sp.z = ip.z;
-		// sp.yaw = cpi.yaw_target;
-
-		// cpi.calculate_yaw_target();
-		// set_position(ip.x, ip.y, ip.z, sp);
-		// set_yaw(cpi.yaw_target, sp);
-		// api.update_setpoint(sp);
-
-
-		usleep(50000); // This is running the loop at 20 HZ
 		char key = (char) waitKey(5);
 
-		if (key == 27 || key == 113){
+		// update rc channels
+		api.get_rc_channels_pwm_values();
+
+		// check if we need to enter offboard mode
+		// start offboard mode if channel 8 is high and not already in offboard
+		if ( !api.control_status && (api.current_rc_channels_pwm.chan7_raw > 1500 || key == 115) )
+		{
+			api.enable_offboard_control();
+			usleep(100); // give some time to let it sink in
+		}
+		// sztop offboard mode if channel 8 is low and already in offboard
+		else if ( api.control_status && (api.current_rc_channels_pwm.chan7_raw <= 1499 || key == 113) )
+		{
+			api.disable_offboard_control();
+		}
+
+		// send commands if in offboard mode
+		if ( api.control_status )
+		{
+			if ( cpi.object_detected ) // track and stabilize
+			{
+				cpi.calculate_x_speed_target();
+				cpi.calculate_y_speed_target();
+				cpi.calculate_z_speed_target();
+				set_velocity(	cpi.x_speed_target,
+								cpi.y_speed_target,
+								cpi.z_speed_target,
+								sp);
+				// cpi.calculate_yaw_target();
+				// set_yaw(cpi.yaw_target, sp);
+				api.update_setpoint(sp);
+			}
+			else // hover
+			{
+				set_velocity(0,0,0,sp);
+				api.update_setpoint(sp);
+			}
+		}
+
+		// if (key == 27 || api.current_rc_channels_pwm.chan6_raw >= 1500 )
+		if (key == 27)
+		{
 			break;
 		}
+		usleep( 50000 );
 	}
 
 	printf("\n");

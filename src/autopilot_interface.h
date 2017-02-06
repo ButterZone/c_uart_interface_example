@@ -148,6 +148,7 @@ struct Time_Stamps
 	uint64_t position_target_global_int;
 	uint64_t highres_imu;
 	uint64_t attitude;
+	uint64_t rc_channels;
 
 	void
 	reset_timestamps()
@@ -162,6 +163,7 @@ struct Time_Stamps
 		position_target_global_int = 0;
 		highres_imu = 0;
 		attitude = 0;
+		rc_channels = 0;
 	}
 
 };
@@ -203,6 +205,9 @@ struct Mavlink_Messages {
 
 	// Attitude
 	mavlink_attitude_t attitude;
+
+	// RC Channels Raw
+	mavlink_rc_channels_t rc_channels;
 
 	// System Parameters?
 
@@ -256,6 +261,7 @@ public:
 
 	Mavlink_Messages current_messages;
 	mavlink_set_position_target_local_ned_t initial_position;
+	mavlink_rc_channels_t current_rc_channels_pwm;
 
 	void update_setpoint(mavlink_set_position_target_local_ned_t setpoint);
 	void read_messages();
@@ -263,6 +269,8 @@ public:
 
 	void enable_offboard_control();
 	void disable_offboard_control();
+
+	void get_rc_channels_pwm_values();
 
 	void start();
 	void stop();
