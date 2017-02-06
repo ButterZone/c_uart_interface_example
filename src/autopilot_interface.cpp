@@ -214,12 +214,15 @@ set_yaw_rate(float yaw_rate, mavlink_set_position_target_local_ned_t &sp)
   * Modifies a mavlink_set_attitude_target_t struct with a target attitude quaternion
   */
  void
- set_attitude(float quarternion[4], mavlink_set_attitude_target_t &att_sp)
+ set_attitude(float q1, float q2, float q3, float q4, mavlink_set_attitude_target_t &att_sp)
  {
   	att_sp.type_mask &=
   		MAVLINK_MSG_SET_ATTITUDE_TARGET_QUARTERNION ;
 
-  	att_sp.q = quarternion;
+  	att_sp.q[0] = q1;
+  	att_sp.q[1] = q2;
+  	att_sp.q[2] = q3;
+  	att_sp.q[3] = q4;
  }
 
 
@@ -915,8 +918,10 @@ write_thread(void)
 	att_sp.type_mask = MAVLINK_MSG_SET_ATTITUDE_TARGET_RATE &
 						MAVLINK_MSG_SET_ATTITUDE_TARGET_THROTTLE &
 						MAVLINK_MSG_SET_ATTITUDE_TARGET_QUARTERNION;
-	float this_q [4] = { 1, 0, 0, 0}; 
-	att_sp.q 	= this_q;
+	att_sp.q[0]				= 1.0;
+	att_sp.q[1] 			= 0.0;
+	att_sp.q[2] 			= 0.0;
+	att_sp.q[3] 			= 0.0;
 	att_sp.body_roll_rate 	= 0.0;
 	att_sp.body_pitch_rate 	= 0.0;
 	att_sp.body_yaw_rate 	= 0.0;
