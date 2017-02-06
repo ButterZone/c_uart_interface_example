@@ -270,6 +270,12 @@ update_setpoint(mavlink_set_position_target_local_ned_t setpoint)
 	current_setpoint = setpoint;
 }
 
+void
+Autopilot_Interface::
+update_attitude_setpoint(mavlink_set_attitude_target_t setpoint)
+{
+	current_attitude_setpoint = setpoint;
+}
 
 // ------------------------------------------------------------------------------
 //   Read Messages
@@ -497,6 +503,33 @@ write_setpoint()
 		fprintf(stderr,"WARNING: could not send POSITION_TARGET_LOCAL_NED \n");
 	//	else
 	//		printf("%lu POSITION_TARGET  = [ %f , %f , %f ] \n", write_count, position_target.x, position_target.y, position_target.z);
+
+	return;
+}
+
+void
+Autopilot_Interface::
+write_attitude_setpoint()
+{
+	// pull from current setpoint
+	mavlink_set_attitude_target_t att_sp = current_attitude_setpoint;
+
+	// double check some system parameters
+	if ( not att_sp.time_boot_ms )
+		att_sp.time_boot_ms = (uint32_t) (get_time_usec()/1000);
+	att_sp.target_system	= system_id;
+	att_sp.target_component	= autopilot_id;
+
+	// encode
+	mavlink_message_t message;
+	mavlink_msg_set_attitude_target_encode(system_id, companion_id, &message, &att_sp);
+
+	//write
+	int len = write_message(message);
+
+	//check the write
+	if ( len <= 0)
+		fprintf(stderr,"WARNING: could not send ATTITUDE_TARGET \n");
 
 	return;
 }
@@ -877,11 +910,25 @@ write_thread(void)
 	sp.vz       = 0.0;
 	sp.yaw_rate = 0.0;
 
+	// prepare an initial attitude setpoint
+	mavlink_set_attitude_target_t att_sp;
+	att_sp.type_mask = MAVLINK_MSG_SET_ATTITUDE_TARGET_RATE &
+						MAVLINK_MSG_SET_ATTITUDE_TARGET_THROTTLE &
+						MAVLINK_MSG_SET_ATTITUDE_TARGET_QUARTERNION;
+	float this_q [4] = { 1, 0, 0, 0}; 
+	att_sp.q 	= this_q;
+	att_sp.body_roll_rate 	= 0.0;
+	att_sp.body_pitch_rate 	= 0.0;
+	att_sp.body_yaw_rate 	= 0.0;
+	att_sp.thrust 			= 0.5;
+
 	// set position target
 	current_setpoint = sp;
+	current_attitude_setpoint = att_sp;
 
 	// write a message and signal writing
 	write_setpoint();
+	write_attitude_setpoint();
 	writing_status = true;
 
 	// Pixhawk needs to see off-board commands at minimum 2Hz,
@@ -890,6 +937,7 @@ write_thread(void)
 	{
 		usleep(250000);   // Stream at 4Hz
 		write_setpoint();
+		write_attitude_setpoint();
 	}
 
 	// signal end

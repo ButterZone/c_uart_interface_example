@@ -324,6 +324,7 @@ private:
 
 	int toggle_offboard_control( bool flag );
 	void write_setpoint();
+	void write_attitude_setpoint();
 
 };
 
