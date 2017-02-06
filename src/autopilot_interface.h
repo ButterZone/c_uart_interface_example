@@ -143,6 +143,10 @@ void set_acceleration(float ax, float ay, float az, mavlink_set_position_target_
 void set_yaw(float yaw, mavlink_set_position_target_local_ned_t &sp);
 void set_yaw_rate(float yaw_rate, mavlink_set_position_target_local_ned_t &sp);
 
+void set_attitude_rate(float roll_rate, float pitch_rate, float yaw_rate, mavlink_set_attitude_target_t &att_sp);
+void set_throttle(float throttle, mavlink_set_attitude_target_t &att_sp);
+void set_attitude(float q[4], mavlink_set_attitude_target_t &att_sp);
+
 void* start_autopilot_interface_read_thread(void *args);
 void* start_autopilot_interface_write_thread(void *args);
 
