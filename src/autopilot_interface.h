@@ -233,6 +233,7 @@ struct Mavlink_Messages {
 	// RC Channels Raw
 	mavlink_rc_channels_t rc_channels;
 
+
 	// System Parameters?
 
 
@@ -288,6 +289,7 @@ public:
 	mavlink_rc_channels_t current_rc_channels_pwm;
 
 	void update_setpoint(mavlink_set_position_target_local_ned_t setpoint);
+	void update_attitude_setpoint(mavlink_set_attitude_target_t setpoint);
 	void read_messages();
 	int  write_message(mavlink_message_t message);
 
@@ -315,6 +317,7 @@ private:
 	pthread_t write_tid;
 
 	mavlink_set_position_target_local_ned_t current_setpoint;
+	mavlink_set_attitude_target_t current_attitude_setpoint;
 
 	void read_thread();
 	void write_thread(void);
