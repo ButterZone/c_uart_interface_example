@@ -109,6 +109,26 @@
 #define MAVLINK_MSG_SET_POSITION_TARGET_LOCAL_NED_YAW_ANGLE    0b0000100111111111
 #define MAVLINK_MSG_SET_POSITION_TARGET_LOCAL_NED_YAW_RATE     0b0000010111111111
 
+/**
+ * Defiens for mavlink_set_attitude_target_t.typemask
+ *
+ * Bitmask to indicate which attitude should be ignored by the vehicle
+ *
+ * Mapping:
+ * bit 1: body roll rate
+ * bit 2: body pitch rate
+ * bit 3: body yaw rate
+ * bit 4-6: reserved
+ * bit 7: throttle
+ * bit 8: attitude
+ * remaining bits are unused
+ *
+ * combine bitmask with bitwise &
+ */
+ #define MAVLINK_MSG_SET_ATTITUDE_TARGET_RATE 					0b0000000011111000
+ #define MAVLINK_MSG_SET_ATTITUDE_TARGET_THROTTLE 				0b0000000010111111
+ #define MAVLINK_MSG_SET_ATTITUDE_TARGET_QUARTERNION 			0b0000000001111111
+
 
 // ------------------------------------------------------------------------------
 //   Prototypes
