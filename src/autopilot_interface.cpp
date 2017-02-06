@@ -178,6 +178,50 @@ set_yaw_rate(float yaw_rate, mavlink_set_position_target_local_ned_t &sp)
 	sp.yaw_rate  = yaw_rate;
 }
 
+/*
+ * Set attitude rate
+ *
+ * Modfiles a mavlink_set_attitude_target_t struct with a target attitude rate
+ */
+ void
+ set_attitude_rate(float roll_rate, float pitch_rate, float yaw_rate, mavlink_set_attitude_target_t &att_sp)
+ {
+ 	att_sp.type_mask &=
+ 		MAVLINK_MSG_SET_ATTITUDE_TARGET_RATE ;
+
+ 	att_sp.body_roll_rate = roll_rate;
+ 	att_sp.body_pitch_rate = pitch_rate;
+ 	att_sp.body_yaw_rate = yaw_rate;
+ }
+
+ /*
+  * Set throttle
+  *
+  * Modifies a mavlink_set_attitude_target_t struct with a target throttle
+  */
+ void
+ set_throttle(float throttle, mavlink_set_attitude_target_t &att_sp)
+ {
+  	att_sp.type_mask &=
+  		MAVLINK_MSG_SET_ATTITUDE_TARGET_THROTTLE ;
+
+  	att_sp.thrust = throttle;
+ }
+
+ /*
+  * Set attitude in quaternion
+  *
+  * Modifies a mavlink_set_attitude_target_t struct with a target attitude quaternion
+  */
+ void
+ set_attitude(float quarternion[4], mavlink_set_attitude_target_t &att_sp)
+ {
+  	att_sp.type_mask &=
+  		MAVLINK_MSG_SET_ATTITUDE_TARGET_QUARTERNION ;
+
+  	att_sp.q = quarternion;
+ }
+
 
 // ----------------------------------------------------------------------------------
 //   Autopilot Interface Class
