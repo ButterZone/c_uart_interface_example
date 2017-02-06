@@ -76,12 +76,28 @@ Camera_Interface()
 	// high_value 					= 61;
 
 	// office background + green object
-	low_hue						= 92;
-	low_saturation				= 88;
-	low_value					= 53;
-	high_hue 					= 125;
+	// low_hue						= 92;
+	// low_saturation				= 88;
+	// low_value					= 53;
+	// high_hue 					= 125;
+	// high_saturation 			= 255;
+	// high_value 					= 193;
+
+	// lab compound background + green object
+	// low_hue						= 54;
+	// low_saturation				= 60;
+	// low_value					= 7;
+	// high_hue 					= 136;
+	// high_saturation 			= 198;
+	// high_value 					= 116;
+
+	// white background + orange object
+	low_hue						= 82;
+	low_saturation				= 119;
+	low_value					= 103;
+	high_hue 					= 238;
 	high_saturation 			= 255;
-	high_value 					= 193;
+	high_value 					= 227;
 
 
 	corrected_frame_size_x 		= 0; 		// number of pixels along the x axis
@@ -150,7 +166,10 @@ read_camera()
 	// reduce orignial frame to a quarter of the size
 	resize(original_frame, original_frame, Size(), 0.5, 0.5, INTER_LINEAR);
 	// convert PiCamera RGB format to BGR for correct OpenCV expectation
-	cvtColor(original_frame, corrected_frame, CV_RGB2BGR);
+	cvtColor(original_frame, original_frame, CV_RGB2BGR);
+	// flip image because the camera is mounted upside down
+	flip(original_frame, original_frame, 0);
+	flip(original_frame, corrected_frame, 1);
 
 	return;
 }
@@ -333,11 +352,11 @@ Camera_Interface::
 calculate_x_speed_target()
 {
 	// keep the object between some distances
-	if ( object_offset_distance < 200)
+	if ( object_offset_distance < 300)
 	{
 		x_speed_target = -1.0f;
 	}
-	else if ( object_offset_distance > 300)
+	else if ( object_offset_distance > 400)
 	{
 		x_speed_target = 1.0f;
 	}

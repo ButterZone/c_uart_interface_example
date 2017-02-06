@@ -192,7 +192,7 @@ commands(Autopilot_Interface &api, Camera_Interface &cpi)
 	// check camera
 	cpi.check_camera();
 	// create trackbar
-	// cpi.create_trackbar_hsv();
+	cpi.create_trackbar_hsv();
 	printf("START COMMAND LOOP\n");
 	printf("\n");
 	printf("WAIT FOR OFFBOARD SWITCH\n");
@@ -201,21 +201,23 @@ commands(Autopilot_Interface &api, Camera_Interface &cpi)
 	while ( true )
 	{
 		cpi.process_frame_hsv();
-		// cpi.show_processed_frame_with_trackbar_hsv();
-		// cpi.show_corrected_frame_with_contour_hsv();
+		cpi.show_processed_frame_with_trackbar_hsv();
+		cpi.show_corrected_frame_with_contour_hsv();
+
+		char key = (char) waitKey(5);
 
 		// update rc channels
 		api.get_rc_channels_pwm_values();
 
 		// check if we need to enter offboard mode
 		// start offboard mode if channel 8 is high and not already in offboard
-		if ( !api.control_status && api.current_rc_channels_pwm.chan8_raw > 1500 )
+		if ( !api.control_status && (api.current_rc_channels_pwm.chan7_raw > 1500 || key == 115) )
 		{
 			api.enable_offboard_control();
 			usleep(100); // give some time to let it sink in
 		}
 		// sztop offboard mode if channel 8 is low and already in offboard
-		else if ( api.control_status && api.current_rc_channels_pwm.chan8_raw <= 1500 )
+		else if ( api.control_status && (api.current_rc_channels_pwm.chan7_raw <= 1499 || key == 113) )
 		{
 			api.disable_offboard_control();
 		}
@@ -232,6 +234,8 @@ commands(Autopilot_Interface &api, Camera_Interface &cpi)
 								cpi.y_speed_target,
 								cpi.z_speed_target,
 								sp);
+				// cpi.calculate_yaw_target();
+				// set_yaw(cpi.yaw_target, sp);
 				api.update_setpoint(sp);
 			}
 			else // hover
@@ -241,9 +245,8 @@ commands(Autopilot_Interface &api, Camera_Interface &cpi)
 			}
 		}
 
-		char key = (char) waitKey(5);
-
-		if (key == 27 || key == 113 )
+		// if (key == 27 || api.current_rc_channels_pwm.chan6_raw >= 1500 )
+		if (key == 27)
 		{
 			break;
 		}
