@@ -145,7 +145,7 @@ void set_yaw_rate(float yaw_rate, mavlink_set_position_target_local_ned_t &sp);
 
 void set_attitude_rate(float roll_rate, float pitch_rate, float yaw_rate, mavlink_set_attitude_target_t &att_sp);
 void set_throttle(float throttle, mavlink_set_attitude_target_t &att_sp);
-void set_attitude(float q[4], mavlink_set_attitude_target_t &att_sp);
+void set_attitude(float q1, float q2, float q3, float q4, mavlink_set_attitude_target_t &att_sp);
 
 void* start_autopilot_interface_read_thread(void *args);
 void* start_autopilot_interface_write_thread(void *args);
@@ -286,6 +286,7 @@ public:
 
 	Mavlink_Messages current_messages;
 	mavlink_set_position_target_local_ned_t initial_position;
+	mavlink_set_attitude_target_t initial_attitude_setpoint;
 	mavlink_rc_channels_t current_rc_channels_pwm;
 
 	void update_setpoint(mavlink_set_position_target_local_ned_t setpoint);
