@@ -186,7 +186,7 @@ set_yaw_rate(float yaw_rate, mavlink_set_position_target_local_ned_t &sp)
  void
  set_attitude_rate(float roll_rate, float pitch_rate, float yaw_rate, mavlink_set_attitude_target_t &att_sp)
  {
- 	att_sp.type_mask &=
+ 	att_sp.type_mask =
  		MAVLINK_MSG_SET_ATTITUDE_TARGET_RATE ;
 
  	att_sp.body_roll_rate = roll_rate;
@@ -202,7 +202,7 @@ set_yaw_rate(float yaw_rate, mavlink_set_position_target_local_ned_t &sp)
  void
  set_throttle(float throttle, mavlink_set_attitude_target_t &att_sp)
  {
-  	att_sp.type_mask &=
+  	att_sp.type_mask =
   		MAVLINK_MSG_SET_ATTITUDE_TARGET_THROTTLE ;
 
   	att_sp.thrust = throttle;
@@ -932,7 +932,7 @@ write_thread(void)
 	current_attitude_setpoint = att_sp;
 
 	// write a message and signal writing
-	write_setpoint();
+	// write_setpoint();
 	write_attitude_setpoint();
 	writing_status = true;
 
@@ -941,7 +941,7 @@ write_thread(void)
 	while ( !time_to_exit )
 	{
 		usleep(250000);   // Stream at 4Hz
-		write_setpoint();
+		// write_setpoint();
 		write_attitude_setpoint();
 	}
 
