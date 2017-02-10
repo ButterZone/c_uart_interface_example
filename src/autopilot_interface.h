@@ -173,6 +173,7 @@ struct Time_Stamps
 	uint64_t highres_imu;
 	uint64_t attitude;
 	uint64_t rc_channels;
+	uint64_t attitude_quaternion;
 
 	void
 	reset_timestamps()
@@ -188,6 +189,7 @@ struct Time_Stamps
 		highres_imu = 0;
 		attitude = 0;
 		rc_channels = 0;
+		attitude_quaternion = 0;
 	}
 
 };
