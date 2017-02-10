@@ -419,6 +419,13 @@ read_messages()
 					this_timestamps.attitude_quaternion = current_messages.time_stamps.attitude_quaternion;
 				}
 
+				case MAVLINK_MSG_ID_MANUAL_SETPOINT:
+				{
+					mavlink_msg_manual_setpoint_decode(&message, &(current_messages.manual_setpoint));
+					current_messages.time_stamps.manual_setpoint = get_time_usec();
+					this_timestamps.manual_setpoint = current_messsages.time_stamps.manual_setpoint;
+				}
+
 				default:
 				{
 					// printf("Warning, did not handle message id %i\n",message.msgid);
