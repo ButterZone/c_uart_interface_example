@@ -233,6 +233,9 @@ struct Mavlink_Messages {
 	// RC Channels Raw
 	mavlink_rc_channels_t rc_channels;
 
+	// Attitude in quarternions
+	mavlink_attitude_quaternion_t attitude_quaternion;
+
 
 	// System Parameters?
 
@@ -286,7 +289,7 @@ public:
 
 	Mavlink_Messages current_messages;
 	mavlink_set_position_target_local_ned_t initial_position;
-	mavlink_set_attitude_target_t initial_attitude_setpoint;
+	mavlink_set_attitude_target_t initial_attitude_setpoint;	
 	mavlink_rc_channels_t current_rc_channels_pwm;
 
 	void update_setpoint(mavlink_set_position_target_local_ned_t setpoint);

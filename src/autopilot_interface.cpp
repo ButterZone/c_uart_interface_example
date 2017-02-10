@@ -412,6 +412,13 @@ read_messages()
 					this_timestamps.rc_channels = current_messages.time_stamps.rc_channels;
 				}
 
+				case MAVLINK_MSG_ID_ATTITUDE_QUATERNION:
+				{
+					mavlink_msg_attitude_quaternion_decode(&message, &(current_messages.attitude_quaternion));
+					current_messages.time_stamps.attitude_quaternion = get_time_usec();
+					this_timestamps.attitude_quaternion = current_messages.time_stamps.attitude_quaternion;
+				}
+
 				default:
 				{
 					// printf("Warning, did not handle message id %i\n",message.msgid);
