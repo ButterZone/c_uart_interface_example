@@ -174,6 +174,7 @@ struct Time_Stamps
 	uint64_t attitude;
 	uint64_t rc_channels;
 	uint64_t attitude_quaternion;
+	uint64_t manual_setpoint;
 
 	void
 	reset_timestamps()
@@ -190,6 +191,7 @@ struct Time_Stamps
 		attitude = 0;
 		rc_channels = 0;
 		attitude_quaternion = 0;
+		manual_setpoint = 0;
 	}
 
 };
@@ -235,8 +237,11 @@ struct Mavlink_Messages {
 	// RC Channels Raw
 	mavlink_rc_channels_t rc_channels;
 
-	// Attitude in quarternions
+	// Attitude Quarternions
 	mavlink_attitude_quaternion_t attitude_quaternion;
+
+	// Manual Setpoint
+	mavlink_manual_setpoint_t manual_setpoint;
 
 
 	// System Parameters?
