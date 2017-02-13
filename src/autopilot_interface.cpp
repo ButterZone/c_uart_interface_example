@@ -423,7 +423,7 @@ read_messages()
 				{
 					mavlink_msg_manual_setpoint_decode(&message, &(current_messages.manual_setpoint));
 					current_messages.time_stamps.manual_setpoint = get_time_usec();
-					this_timestamps.manual_setpoint = current_messsages.time_stamps.manual_setpoint;
+					this_timestamps.manual_setpoint = current_messages.time_stamps.manual_setpoint;
 				}
 
 				default:

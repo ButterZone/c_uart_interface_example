@@ -84,20 +84,20 @@ Camera_Interface()
 	// high_value 					= 193;
 
 	// lab compound background + green object
-	// low_hue						= 54;
-	// low_saturation				= 60;
-	// low_value					= 7;
-	// high_hue 					= 136;
-	// high_saturation 			= 198;
-	// high_value 					= 116;
+	low_hue						= 54;
+	low_saturation				= 60;
+	low_value					= 7;
+	high_hue 					= 136;
+	high_saturation 			= 198;
+	high_value 					= 116;
 
 	// white background + orange object
-	low_hue						= 82;
-	low_saturation				= 119;
-	low_value					= 103;
-	high_hue 					= 238;
-	high_saturation 			= 255;
-	high_value 					= 227;
+	// low_hue						= 82;
+	// low_saturation				= 119;
+	// low_value					= 103;
+	// high_hue 					= 238;
+	// high_saturation 			= 255;
+	// high_value 					= 227;
 
 
 	corrected_frame_size_x 		= 0; 		// number of pixels along the x axis

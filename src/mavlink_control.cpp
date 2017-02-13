@@ -187,7 +187,9 @@ commands(Autopilot_Interface &api, Camera_Interface &cpi)
 	// set up
 	mavlink_set_position_target_local_ned_t sp;
 	mavlink_set_position_target_local_ned_t ip = api.initial_position;
+	mavlink_set_attitude_target_t att_sp;
 	mavlink_rc_channels_t rc_channels = api.current_rc_channels_pwm;
+	mavlink_attitude_t initial_attitude;
 
 	// check camera
 	cpi.check_camera();
@@ -211,13 +213,15 @@ commands(Autopilot_Interface &api, Camera_Interface &cpi)
 
 		// check if we need to enter offboard mode
 		// start offboard mode if channel 8 is high and not already in offboard
-		if ( !api.control_status && (api.current_rc_channels_pwm.chan7_raw > 1500 || key == 115) )
+		// if ( !api.control_status && (api.current_rc_channels_pwm.chan7_raw > 1500 || key == 115) )
+		if ( !api.control_status && key == 115)
 		{
 			api.enable_offboard_control();
 			usleep(100); // give some time to let it sink in
 		}
 		// sztop offboard mode if channel 8 is low and already in offboard
-		else if ( api.control_status && (api.current_rc_channels_pwm.chan7_raw <= 1499 || key == 113) )
+		// else if ( api.control_status && (api.current_rc_channels_pwm.chan7_raw <= 1499 || key == 113) )
+		else if ( api.control_status && key == 113 )
 		{
 			api.disable_offboard_control();
 		}
@@ -225,24 +229,32 @@ commands(Autopilot_Interface &api, Camera_Interface &cpi)
 		// send commands if in offboard mode
 		if ( api.control_status )
 		{
-			if ( cpi.object_detected ) // track and stabilize
-			{
-				cpi.calculate_x_speed_target();
-				cpi.calculate_y_speed_target();
-				cpi.calculate_z_speed_target();
-				set_velocity(	cpi.x_speed_target,
-								cpi.y_speed_target,
-								cpi.z_speed_target,
-								sp);
-				// cpi.calculate_yaw_target();
-				// set_yaw(cpi.yaw_target, sp);
-				api.update_setpoint(sp);
-			}
-			else // hover
-			{
-				set_velocity(0,0,0,sp);
-				api.update_setpoint(sp);
-			}
+			// if ( cpi.object_detected ) // track and stabilize
+			// {
+			// 	cpi.calculate_x_speed_target();
+			// 	cpi.calculate_y_speed_target();
+			// 	cpi.calculate_z_speed_target();
+			// 	set_velocity(	cpi.x_speed_target,
+			// 					cpi.y_speed_target,
+			// 					cpi.z_speed_target,
+			// 					sp);
+			// 	// cpi.calculate_yaw_target();
+			// 	// set_yaw(cpi.yaw_target, sp);
+			// 	api.update_setpoint(sp);
+			// }
+			// else // hover
+			// {
+			// 	set_velocity(0,0,0,sp);
+			// 	api.update_setpoint(sp);
+			// }
+
+			set_throttle(0.5, att_sp);
+			set_attitude(1.0f, 0.0f, 0.0f, 0.0f, att_sp);
+			api.update_attitude_setpoint(att_sp);
+
+			// set_attitude_rate(1.6,0.0,0.0,att_sp);
+			// set_throttle(1,att_sp);
+			// api.update_attitude_setpoint(att_sp);
 		}
 
 		// if (key == 27 || api.current_rc_channels_pwm.chan6_raw >= 1500 )
