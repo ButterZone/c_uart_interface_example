@@ -225,6 +225,22 @@ set_yaw_rate(float yaw_rate, mavlink_set_position_target_local_ned_t &sp)
   	att_sp.q[3] = q4;
  }
 
+ void
+ euler2quaternion(float roll, float pitch, float yaw, float q[4])
+ {
+ 	double t0 = cos(yaw * 0.5);
+ 	double t1 = sin(yaw * 0.5);
+ 	double t2 = cos(roll * 0.5);
+ 	double t3 = sin(roll * 0.5);
+ 	double t4 = cos(pitch * 0.5);
+ 	double t5 = sin(pitch * 0.5);
+
+ 	q[0] = t0 * t2 * t4 + t1 * t3 * t5;
+ 	q[1] = t0 * t3 * t4 - t1 * t2 * t5;
+ 	q[2] = t0 * t2 * t5 + t1 * t3 * t4;
+ 	q[3] = t1 * t2 * t4 - t0 * t3 * t5;
+ }
+
 
 // ----------------------------------------------------------------------------------
 //   Autopilot Interface Class
@@ -927,7 +943,7 @@ write_thread(void)
 	sp.vz       = 0.0;
 	sp.yaw_rate = 0.0;
 
-	// prepare an initial attitude setpoint
+	// prepare a blank initial attitude setpoint
 	mavlink_set_attitude_target_t att_sp;
 	att_sp.type_mask = MAVLINK_MSG_SET_ATTITUDE_TARGET_RATE &
 						MAVLINK_MSG_SET_ATTITUDE_TARGET_THROTTLE &

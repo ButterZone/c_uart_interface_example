@@ -147,6 +147,8 @@ void set_attitude_rate(float roll_rate, float pitch_rate, float yaw_rate, mavlin
 void set_throttle(float throttle, mavlink_set_attitude_target_t &att_sp);
 void set_attitude(float q1, float q2, float q3, float q4, mavlink_set_attitude_target_t &att_sp);
 
+void euler2quaternion(float roll, float pitch, float yaw, float q[4]);
+
 void* start_autopilot_interface_read_thread(void *args);
 void* start_autopilot_interface_write_thread(void *args);
 
